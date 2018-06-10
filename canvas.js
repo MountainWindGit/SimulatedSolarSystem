@@ -7,7 +7,7 @@ canvas.height = window.innerHeight;
 let galaxy = [
     //太阳
     {
-        radius: 35,
+        radius: 30,
         x: canvas.width/2,
         y: canvas.height/2,
         gradColor: {
@@ -26,8 +26,8 @@ let galaxy = [
     },
     //水星
     {
-        radius: 5,
-        x: canvas.width/2 - 130,
+        radius: 4,
+        x: canvas.width/2 - 110,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#9d652a',
@@ -37,16 +37,16 @@ let galaxy = [
             blur: 10,
             color: '#ce9b59'
         },
-        speed: 7,
+        speed: 15,
         arr: [],
-        long: 130,
+        long: 110,
         short: 40,
         z: 0
     },
     //金星
     {
-        radius: 10,
-        x: canvas.width/2 - 200,
+        radius: 8,
+        x: canvas.width/2 - 180,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#ffd179',
@@ -56,15 +56,15 @@ let galaxy = [
             blur: 10,
             color: '#d69f42'
         },
-        speed: 6,
+        speed: 11,
         arr: [],
-        long: 200,
-        short: 70,
+        long: 180,
+        short: 65,
         z: 0
     },
     //地球
     {
-        radius: 10,
+        radius: 8,
         x: canvas.width/2 - 250,
         y: canvas.height/2,
         gradColor: {
@@ -75,7 +75,7 @@ let galaxy = [
             blur: 10,
             color: '#2f78d4'
         },
-        speed: 5,
+        speed: 10,
         arr: [],
         long: 250,
         short: 90,
@@ -83,8 +83,8 @@ let galaxy = [
     },
     //火星
     {
-        radius: 9,
-        x: canvas.width/2 - 300,
+        radius: 7,
+        x: canvas.width/2 - 315,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#ce6f47',
@@ -94,16 +94,16 @@ let galaxy = [
             blur: 9,
             color: '#da7942'
         },
-        speed: 4,
+        speed: 8,
         arr: [],
-        long: 300,
-        short: 110,
+        long: 315,
+        short: 120,
         z: 0
     },
     //木星
     {
-        radius: 25,
-        x: canvas.width/2 - 360,
+        radius: 20,
+        x: canvas.width/2 - 390,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#ad6a35',
@@ -113,16 +113,16 @@ let galaxy = [
             blur: 20,
             color: '#d49e4c'
         },
-        speed: 1,
+        speed:2,
         arr: [],
-        long: 360,
-        short: 130,
+        long: 390,
+        short: 150,
         z: 0
     },
     //土星
     {
-        radius: 18,
-        x: canvas.width/2 - 430,
+        radius: 14,
+        x: canvas.width/2 - 465,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#e3a246',
@@ -130,18 +130,18 @@ let galaxy = [
         },
         shadowData: {
             blur: 10,
-            color: '#241c09'
+            color: '#efe560'
         },
-        speed: 3,
+        speed: 1,
         arr: [],
-        long: 430,
-        short: 150,
+        long: 465,
+        short: 180,
         z: 0
     },
     //天王星
     {
-        radius: 14,
-        x: canvas.width/2 - 500,
+        radius: 10,
+        x: canvas.width/2 - 530,
         y: canvas.height/2,
         gradColor: {
             colorStart: '#83c9eb',
@@ -151,15 +151,15 @@ let galaxy = [
             blur: 20,
             color: '#1886dc'
         },
-        speed: 2,
+        speed: 0.5,
         arr: [],
-        long: 500,
-        short: 190,
+        long: 540,
+        short: 220,
         z: 0
     },
     //海王星
     {
-        radius: 12,
+        radius: 9,
         x: canvas.width/2 - 600,
         y: canvas.height/2,
         gradColor: {
@@ -170,10 +170,10 @@ let galaxy = [
             blur: 5,
             color: '#3d58e7'
         },
-        speed: 1,
+        speed: 0.25,
         arr: [],
-        long: 600,
-        short: 230,
+        long: 640,
+        short: 260,
         z: 0
     }
 ];
@@ -196,6 +196,7 @@ class Star {
         ctx.shadowColor = this.props.shadowData.color;
         ctx.arc(this.props.x, this.props.y, this.props.radius, 0, 2*Math.PI);
         ctx.fill();
+        ctx.closePath();
     }
 }
 
@@ -212,49 +213,53 @@ class Tack{
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.beginPath();
-        ctx.strokeStyle = '#666';
+        ctx.strokeStyle = '#101010';
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = '#000';
         ctx.lineWidth = 1;
         ctx.moveTo(0, this.b);
         ctx.bezierCurveTo(ox, this.b, this.a, oy, this.a, 0);
         ctx.bezierCurveTo(this.a, -oy, ox, -this.b, 0, -this.b);
         ctx.bezierCurveTo(-ox, -this.b, -this.a, -oy, -this.a, 0);
         ctx.bezierCurveTo(-this.a, oy, -ox, this.b, 0, this.b);
-        ctx.closePath();
         ctx.stroke();
+        ctx.closePath();
         ctx.restore();
     }
 }
 
 //公转周期
 const revolation = (obj) => {
-    for(let i=0; i<360; i++){
+    for(let i=0; i<360; i+= 0.25){
         let radian = (Math.PI/180)*i,
             x1 = obj.long*(Math.sin(radian)) + canvas.width/2,
             y1 = canvas.height/2 - (Math.cos(radian)*obj.short);
-        obj.arr[i] = [];
-        obj.arr[i][0] = x1 - 2;
-        obj.arr[i][1] = y1 - 2;
+        obj.arr[i*4] = [];
+        obj.arr[i*4][0] = x1 - 1;
+        obj.arr[i*4][1] = y1 - 1;
     }
 }
 
-
+//行星位置初始
 galaxy.map(i => {
     new Star(i).draw();
     new Tack(canvas.width/2,canvas.height/2,i.long,i.short).draw();
     revolation(i);
 })
 
-const start = setTimeout(function fn(){
+//公转速度
+const start = function(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     galaxy.map(i => {
-        if(i.z >= 360){
+        if(i.z >= 1440){
             i.z = 0;
         }
-        i.x = i.arr[i.z][0];
-        i.y = i.arr[i.z][1];
+        i.x = i.arr[Math.floor(i.z)][0];
+        i.y = i.arr[Math.floor(i.z)][1];
         i.z += i.speed;
         new Tack(canvas.width/2,canvas.height/2,i.long,i.short).draw();
         new Star(i).draw();
     })
-    setTimeout(fn,20);
-},20)
+    window.requestAnimationFrame(start);
+}
+start();
